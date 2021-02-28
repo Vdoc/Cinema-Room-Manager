@@ -1,7 +1,28 @@
 package cinema
+
+import java.util.*
+/*
+Stage 2/5: Sold!
+*/
+fun main() {
+    println("Enter the number of rows:")
+    val scanner = Scanner(System.`in`)
+    val rows = scanner.nextInt()
+    println("Enter the number of seats in each row:")
+    val seatsInRow = scanner.nextInt()
+    println("Total income:")
+    val seats = rows * seatsInRow
+    val income = when {
+        seats < 60 -> seats * 10
+        else -> (rows / 2) * seatsInRow * 10 + (rows - rows / 2) * seatsInRow * 8
+    }
+    println("$$income")
+}
+
+
+
 /*
 Stage 1/5: Arrangement
-*/
 
 fun main() {
     // write your code here
@@ -15,3 +36,4 @@ fun main() {
             "6 S S S S S S S S\n" +
             "7 S S S S S S S S")
 }
+*/
