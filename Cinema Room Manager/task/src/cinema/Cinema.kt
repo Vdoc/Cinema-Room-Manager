@@ -2,8 +2,161 @@ package cinema
 
 import java.util.*
 /*
-Stage 4/5: Menu, please!
+Stage 5/5: Errors!
 */
+val scanner = Scanner(System.`in`)
+
+fun main() {
+    val cinema = initCinema()
+    cinema.showMenu()
+}
+
+fun initCinema(): Cinema {
+    println("Enter the number of rows:")
+    val rows = scanner.nextInt()
+    println("Enter the number of seats in each row:")
+    val seatsInRow = scanner.nextInt()
+    println()
+
+    return Cinema(rows, seatsInRow)
+}
+
+class Cinema {
+
+    var rows = 0
+    var seatsInRow = 0
+    var seatsAll = 0
+    var halfHall = 0
+    val m: Array<IntArray>
+
+    var lostX = 0
+    var lostY = 0
+
+    val magicNomber = 1
+    var totalIncome = 0
+    var currentIncome = 0
+    var purchasedTickets = 0
+    var percentage = 0.0
+
+    fun showMenu() {
+        var exit = false
+        while (!exit) {
+            print("1. Show the seats\n" +
+                  "2. Buy a ticket\n" +
+                  "3. Statistics\n" +
+                  "0. Exit\n")
+            when (scanner.nextInt()) {
+                0 -> exit = true
+                1 -> printScreenRoom()
+                2 -> {
+                    sellTicket()
+                    calculatePrice()
+                }
+                3 -> printStatistic()
+                else -> print("")
+            }
+        }
+    }
+
+    private fun printStatistic() {
+        percentage = purchasedTickets * 100 / seatsAll.toDouble()
+        println("\nNumber of purchased tickets: $purchasedTickets\n" +
+                "Percentage: ${String.format("%.2f", percentage)}%\n" +
+                "Current income: $$currentIncome\n" +
+                "Total income: $$totalIncome\n")
+    }
+
+    fun sellTicket() {
+        while (true) {
+            println("\nEnter a row number:")
+            val row = scanner.nextInt()
+
+            println("Enter a seat number in that row:")
+            val seat = scanner.nextInt()
+
+            if (row > rows || seat > seatsInRow) {
+                println("\nWrong input!")
+                sellTicket()
+                break
+            }
+
+            markPlace(row - 1, seat - 1)
+            break
+        }
+    }
+
+    fun markPlace(row: Int, seat: Int) {
+        if (getSeat(row, seat) == 0) {
+            m[row][seat] = magicNomber
+            lostY = row
+            lostX = seat
+        } else {
+            println("\nThat ticket has already been purchased!")
+            sellTicket()
+        }
+        println()
+    }
+
+    fun calculatePrice() {
+        print("Ticket price: ")
+        val price = when {
+            lostY < halfHall -> 10
+            else -> 8
+        }
+        currentIncome += price
+        purchasedTickets++
+        println("$" + price)
+        println()
+    }
+
+    fun getSeat(row: Int, column: Int) = m[row][column]
+
+    fun printScreenRoom() {
+        var output = "\nCinema:\n"
+        for (i in 0..rows) {
+            for (j in 0..seatsInRow) {
+                if (i == 0) {
+                    if (j == 0) output += "  "
+                    else output += "$j "
+                    continue
+                }
+                if (j == 0) {
+                    output += "$i "
+                    continue
+                }
+                output += when (getSeat(i-1, j-1)) {
+                    1 -> "B "
+                    else -> "S "
+                }
+            }
+            output += "\n"
+        }
+        println(output)
+    }
+
+    constructor (y: Int, x: Int) {
+        this.seatsInRow = x
+        this.rows = y
+        this.seatsAll = x * y
+        if (seatsAll < 60) {
+            halfHall = y
+            totalIncome = halfHall * seatsInRow * 10
+        }
+        else {
+            halfHall = rows / 2
+            totalIncome = halfHall * seatsInRow * 10 + (rows - halfHall) * seatsInRow * 8
+        }
+        m = Array(y) { IntArray(x) }
+    }
+}
+
+
+
+
+
+/*
+Stage 4/5: Menu, please!
+
 val scanner = Scanner(System.`in`)
 
 fun main() {
@@ -114,14 +267,13 @@ class Cinema {
         m = Array(y) { IntArray(x) }
     }
 }
-
+*/
 
 
 
 
 /*
 Stage 3/5: Tickets
-
 fun main() {
     val cinema = initCinema()
     cinema.printScreenRoom()
@@ -129,49 +281,37 @@ fun main() {
     cinema.calculatePrice()
     cinema.printScreenRoom()
 }
-
 fun initCinema(): Cinema {
     println("Enter the number of rows:")
     val scanner = Scanner(System.`in`)
     val rows = scanner.nextInt()
     println("Enter the number of seats in each row:")
     val seatsInRow = scanner.nextInt()
-
     return Cinema(rows, seatsInRow)
 }
-
 class Cinema {
-
     var rows = 0
     var seatsInRow = 0
     var seats = 0
     var r = 0
     val m: Array<IntArray>
-
     var lostX = 0
     var lostY = 0
-
     val magicNomber = 1
-
     fun sellTicket() {
         print("Enter a row number:\n")
         val scanner = Scanner(System.`in`)
         val row = scanner.nextInt()
-
         print("Enter a seat number in that row:\n")
         val seat = scanner.nextInt()
-
         markPlace(row - 1, seat - 1)
     }
-
     private fun markPlace(row: Int, seat: Int) {
         if (getSeat(row, seat) == 0) m[row][seat] = magicNomber
         lostX = seat
         lostY = row
     }
-
     fun getSeat(row: Int, column: Int) = m[row][column]
-
     fun printScreenRoom() {
         var output = "\nCinema:\n"
         for (i in 0..rows) {
@@ -195,7 +335,6 @@ class Cinema {
         output += "\n"
         print(output)
     }
-
     fun calculatePrice() {
         print("\nTicket price: ")
         val price = when {
@@ -204,7 +343,6 @@ class Cinema {
         }
         print("$$price\n")
     }
-
     constructor (y: Int, x: Int) {
         this.seatsInRow = x
         this.rows = y
